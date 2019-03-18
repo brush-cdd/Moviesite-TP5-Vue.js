@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加视频</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/plugins/layui/css/layui.css">
+    <script type="text/javascript" src="__STATIC__/plugins/layui/layui.js"></script>
+</head>
+<body style="padding: 10px;">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">视频名称</label>
+            <div class="layui-input-block">
+                <input type="text" class="layui-input" name="title">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">频道名称</label>
+            <div class="layui-input-inline">
+                <select name="channel_id">
+
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">封面图片</label>
+            <div class="layui-input-inline">
+                <button class="layui-btn layui-btn-sm" onclick="return false;" id="upload_img"><i class="layui-icon">&#xe67c;</i>上传图片</button>
+            </div>
+            <div class="layui-upload-list">
+                <img class="layui-upload-img" id="pre_img" style="height: 100px;" src="" />
+                <input type="hidden" name="img">
+                <p id="demoText"></p>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">视频地址</label>
+            <div class="layui-input-block">
+                <input type="text" class="layui-input" name="url">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">关键字</label>
+            <div class="layui-input-block">
+                <input type="text" class="layui-input" name="keyword">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">描述</label>
+            <div class="layui-input-block">
+                <input type="text" class="layui-input" name="desc">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-inline">
+                <input type="checkbox" layui-skin="primary" name="status" title="发布" value="1">
+            </div>
+        </div>
+    </form>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn">保存</button>
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    layui.use(['form','layer','upload'],function () {
+        $ = layui.jquery;
+        var form = layui.form;
+        layer = layui.layer;
+        var upload = layui.upload;
+
+        //普通图片上传
+        var uploadInst = upload.render({
+            elem: '#upload_img'
+            ,url: '/admins/Video/upload_img'
+            ,accept: 'images'
+            ,done: function(res){
+                //上传成功
+                $('#pre_img').attr('src',res.msg);
+                $('input[name="img"]').val(res.msg);
+                //如果上传失败
+                if(res.code > 0){
+                    return layer.msg('上传失败');
+                }
+            }
+            ,error: function(){
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+    });
+</script>

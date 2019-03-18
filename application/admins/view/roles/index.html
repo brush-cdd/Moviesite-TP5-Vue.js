@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>角色管理</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/plugins/layui/css/layui.css">
+    <script type="text/javascript" src="__STATIC__/plugins/layui/layui.js"></script>
+    <style type="text/css">
+        html{color: #666;background-color: #f2f2f2;}
+        .header span{background: #009688;margin-left: 30px;padding: 10px;color: #ffffff;}
+        .header div{border-bottom: solid 2px #009688;margin-top: 8px;}
+        .layadmin-header .layui-breadcrumb{padding: 0 15px;}
+        .layadmin-tabspage-none .layadmin-header{display: block;}
+        .layadmin-header{height: 50px;line-height: 50px;margin-bottom: 0;border-radius: 0;}
+        .layui-fluid{padding: 15px;position: relative;}
+        .layui-card{background-color: #fff;box-shadow: rgba(0,0,0,.05);}
+        .layadmin-header .layui-breadcrumb{border-top: 1px solid #f6f6f6;}
+        .layui-col-space15{margin: -7.5px;}
+        .layui-col-md12{width: 100%;}
+        .layui-table-view .layui-table{width: 100%;background-color: #fff;color: #666;}
+        .layui-card-header{position: relative;height: 42px;line-height: 42px;padding: 0 15px;border-bottom: 1px solid #f6f6f6;color: #333;border-radius: 2px 2px 0 0;font-size: 14px;}
+        .layui-card-body{position: relative;padding: 10px 15px;line-height: 24px;}
+        .layui-table-tool-temp {padding-right: 0px;}
+        .layui-card .layui-table-view{margin: 0;}
+        .layui-table-box{position: relative;overflow: hidden;}
+    </style>
+</head>
+<body>
+<!-- header -->
+<div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb" style="visibility: visible;">
+        <a lay-href>权限管理</a>
+        <span lay-separator></span>
+        <a href="/admins/Roles/index"><cite>角色管理</cite></a>
+    </div>
+</div>
+
+<!-- main -->
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">角色管理</div>
+                <div class="layui-card-body">
+                    <div class="layui-table-tool-temp">
+                        <div class="layui-btn-container">
+                            <button class="layui-btn layui-btn-sm" onclick="add()">添加</button>
+                            <!--<button class="layui-btn layui-btn-sm">添加管理员</button>-->
+                        </div>
+                    </div>
+                    <div class="layui-table-box">
+                        <input type="hidden" name="" value="">
+                        <table class="layui-table">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>角色名称</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {volist id="vo" name="data.roles"}
+                            <tr>
+                                <td>{$vo.gid}</td>
+                                <td>{$vo.title}</td>
+                                <td>
+                                    <button class="layui-btn layui-btn-warm layui-btn-xs" onclick="add({$vo.gid})">编辑</button>
+                                    <button class="layui-btn layui-btn-danger layui-btn-xs" onclick="del({$vo.gid})">删除</button>
+                                </td>
+                            </tr>
+                            {/volist}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+    layui.use(['layer'],function () {
+        $ = layui.jquery;
+        layer = layui.layer;
+    });
+
+    // 添加
+    function add(gid) {
+        layer.open({
+            type: 2,
+            title: gid>0?'编辑角色':'添加角色',
+            shade: 0.3,
+            area: ['480px', '420px'],
+            //把id的值传到后台，意思是指定哪条数据要转换
+            content: 'add?gid='+gid,
+        });
+    }
+
+    //删除
+    function del(gid) {
+        layer.confirm('确定要删除吗？', {
+            icon:3,
+            btn: ['确定','取消']
+        }, function(){
+            $.post('/admins/Roles/deletes',{'gid':gid},function (res) {
+                if(res.code>0){
+                    layer.alert(res.msg,{icon:2});
+                }else {
+                    layer.msg(res.msg);
+                    setTimeout(function () {
+                        window.location.reload();
+                    },1000);
+                }
+            },'json');
+        });
+    }
+</script>

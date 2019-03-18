@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>频道管理</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/plugins/layui/css/layui.css">
+    <script type="text/javascript" src="__STATIC__/plugins/layui/layui.js"></script>
+    <style type="text/css">
+        html{color: #666;background-color: #f2f2f2;}
+        .header span{background: #009688;margin-left: 30px;padding: 10px;color: #ffffff;}
+        .header div{border-bottom: solid 2px #009688;margin-top: 8px;}
+        .layadmin-header .layui-breadcrumb{padding: 0 15px;}
+        .layadmin-tabspage-none .layadmin-header{display: block;}
+        .layadmin-header{height: 50px;line-height: 50px;margin-bottom: 0;border-radius: 0;}
+        .layui-fluid{padding: 15px;position: relative;}
+        .layui-card{background-color: #fff;box-shadow: rgba(0,0,0,.05);}
+        .layadmin-header .layui-breadcrumb{border-top: 1px solid #f6f6f6;}
+        .layui-col-space15{margin: -7.5px;}
+        .layui-col-md12{width: 100%;}
+        .layui-table-view .layui-table{width: 100%;background-color: #fff;color: #666;}
+        .layui-card-header{position: relative;height: 42px;line-height: 42px;padding: 0 15px;border-bottom: 1px solid #f6f6f6;color: #333;border-radius: 2px 2px 0 0;font-size: 14px;}
+        .layui-card-body{position: relative;padding: 10px 15px;line-height: 24px;}
+        .layui-table-tool-temp {padding-right: 0px;}
+        .layui-card .layui-table-view{margin: 0;}
+        .layui-table-box{position: relative;overflow: hidden;}
+    </style>
+</head>
+<body>
+<!-- header -->
+<div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb" style="visibility: visible;">
+        <a lay-href>标签管理</a>
+        <span lay-separator></span>
+        <a href="/admins/Menu/index"><cite>频道管理</cite></a>
+    </div>
+</div>
+
+<!-- main -->
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">频道管理</div>
+                <div class="layui-card-body">
+                    <div class="layui-table-tool-temp">
+                        <div class="layui-btn-container">
+
+                        </div>
+                    </div>
+                    <div class="layui-table-box">
+                        <form class="layui-form">
+                            <input type="hidden" name="flag" value="channel">
+                            <table class="layui-table">
+                                <thead>
+                                <tr>
+                                    <th><span>ID</span></th>
+                                    <th>排序</th>
+                                    <th>标签名称</th>
+                                    <th>是否禁用</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {volist name="data" id="vo"}
+                                <tr>
+                                    <td>{$vo.id}</td>
+                                    <td><input type="text" class="layui-input" name="ord[{$vo.id}]" value="{$vo.ord}"></td>
+                                    <td><input type="text" class="layui-input" name="titles[{$vo.id}]" value="{$vo.title}"></td>
+                                    <td><input type="checkbox" lay-skin="primary" name="status[{$vo.id}]" value=1 title="禁用" {$vo.status?'checked':''}></td>
+                                </tr>
+                                {/volist}
+                                <tr>
+                                    <td></td>
+                                    <td><input type="text" class="layui-input" name="ords[0]"></td>
+                                    <td><input type="text" class="layui-input" name="titles[0]"></td>
+                                    <td><input type="checkbox" lay-skin="primary" name="status[0]" value=1 title="禁用"}></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                        <button class="layui-btn" onclick="save()">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    layui.use(['layer','form'],function () {
+        $ = layui.jquery;
+        layer = layui.layer;
+        form = layui.form;
+    });
+
+    function save() {
+        $.post('/admins/Labels/save',$('form').serialize(),function (res) {
+            if(res.code>0){
+                layer.msg(res.msg,{'icon':2});
+            }else{
+                layer.msg(res.msg,{'icon':1});
+                setTimeout(function () {
+                    window.location.reload();
+                },1000)
+            }
+        },'json');
+    }
+</script>
+</body>
+</html>

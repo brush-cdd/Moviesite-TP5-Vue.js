@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>网站设置</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/plugins/layui/css/layui.css">
+    <script type="text/javascript" src="__STATIC__/plugins/layui/layui.js"></script>
+    <style type="text/css">
+        html{color: #666;background-color: #f2f2f2;}
+        .header span{background: #009688;margin-left: 30px;padding: 10px;color: #ffffff;}
+        .header div{border-bottom: solid 2px #009688;margin-top: 8px;}
+        .layadmin-header .layui-breadcrumb{padding: 0 15px;}
+        .layadmin-tabspage-none .layadmin-header{display: block;}
+        .layadmin-header{height: 50px;line-height: 50px;margin-bottom: 0;border-radius: 0;}
+        .layui-fluid{padding: 15px;position: relative;}
+        .layui-card{background-color: #fff;box-shadow: rgba(0,0,0,.05);}
+        .layadmin-header .layui-breadcrumb{border-top: 1px solid #f6f6f6;}
+        .layui-col-space15{margin: -7.5px;}
+        .layui-col-md12{width: 100%;}
+        .layui-table-view .layui-table{width: 100%;background-color: #fff;color: #666;}
+        .layui-card-header{position: relative;height: 42px;line-height: 42px;padding: 0 15px;border-bottom: 1px solid #f6f6f6;color: #333;border-radius: 2px 2px 0 0;font-size: 14px;}
+        .layui-card-body{position: relative;padding: 10px 15px;line-height: 24px;}
+        .layui-table-tool-temp {padding-right: 0px;}
+        .layui-card .layui-table-view{margin: 0;}
+        .layui-table-box{position: relative;overflow: hidden;}
+    </style>
+</head>
+<body>
+    <!-- header -->
+    <div class="layui-card layadmin-header">
+        <div class="layui-breadcrumb" lay-filter="breadcrumb" style="visibility: visible;">
+            <a lay-href>权限管理</a>
+            <span lay-separator></span>
+            <a href="/admins/Roles/index"><cite>角色管理</cite></a>
+        </div>
+    </div>
+
+    <!-- main -->
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">网站设置</div>
+                    <div class="layui-card-body">
+                        <div class="layui-table-tool-temp">
+                                    <form class="layui-form">
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">网站名称</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" class="layui-input" name="title" value="{$site.values}">
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="layui-form-item">
+                                        <button class="layui-btn" onclick="save()">提交</button>
+                                    </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    layui.use(['layer'],function () {
+        $ = layui.jquery;
+        layer = layui.layer;
+    });
+
+    function save() {
+        var title = $.trim($('input[name="title"]').val());
+        if (title == ''){
+            layer.msg('网站名称不能为空',{icon:2});
+            return;
+        }
+        $.post('/admins/Site/save',{'title':title},function (res) {
+            if (res.code>0){
+                layer.msg(res.msg,{icon:2});
+            }else{
+                layer.msg(res.msg,{icon:1});
+                setTimeout(function () {
+                    window.location.reload();
+                },1000);
+            }
+        },'json');
+    }
+</script>
