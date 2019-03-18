@@ -71,7 +71,7 @@
                                 <td>{$vo.title}</td>
                                 <td>{$vo.pv}</td>
                                 <td>{$vo.score}</td>
-                                <td>{$vo.status==0?'正常':'<span style="color: #FF5722;">禁用</span>'}</td>
+                                <td>{$vo.status==1?'发布':'<span style="color: #FF5722;">下线</span>'}</td>
                                 <td>{:date('Y-m-d H:i',$vo.add_time)}</td>
                                 <td>
                                     <button class="layui-btn layui-btn-xs" onclick="add({$vo.id})">编辑</button>

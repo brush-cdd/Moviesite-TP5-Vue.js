@@ -8,17 +8,24 @@
 </head>
 <body style="padding: 10px;">
     <form class="layui-form">
+        <input type="hidden" name="id" value="{$data.item.id}">
         <div class="layui-form-item">
             <label class="layui-form-label">视频名称</label>
             <div class="layui-input-block">
-                <input type="text" class="layui-input" name="title">
+                <input type="text" class="layui-input" name="title" value="{$data.item.title}">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">频道名称</label>
             <div class="layui-input-inline">
                 <select name="channel_id">
-
+                    <option value="0">请选择</option>
+                    {volist name="data.channel" id="vo_channel"}
+                    <option value="{$vo_channel.id}" <?php
+                    if($data['item']['channel_id']==$vo_channel['id']){
+                    echo 'selected';}?>
+                    >{$vo_channel.title}</option>
+                    {/volist}
                 </select>
             </div>
         </div>
@@ -28,8 +35,8 @@
                 <button class="layui-btn layui-btn-sm" onclick="return false;" id="upload_img"><i class="layui-icon">&#xe67c;</i>上传图片</button>
             </div>
             <div class="layui-upload-list">
-                <img class="layui-upload-img" id="pre_img" style="height: 100px;" src="" />
-                <input type="hidden" name="img">
+                <img class="layui-upload-img" id="pre_img" style="height: 100px;"  <?php if($data['item']['img']){echo 'src="'.$data['item']['img'].'"';}?>/>
+                <input type="hidden" name="img" value="{$data.item.img}">
                 <p id="demoText"></p>
             </div>
         </div>
@@ -37,31 +44,31 @@
         <div class="layui-form-item">
             <label class="layui-form-label">视频地址</label>
             <div class="layui-input-block">
-                <input type="text" class="layui-input" name="url">
+                <input type="text" class="layui-input" name="url" value="{$data.item.url}">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">关键字</label>
             <div class="layui-input-block">
-                <input type="text" class="layui-input" name="keyword">
+                <input type="text" class="layui-input" name="keyword" value="{$data.item.keyword}">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">描述</label>
             <div class="layui-input-block">
-                <input type="text" class="layui-input" name="desc">
+                <input type="text" class="layui-input" name="desc" value="{$data.item.desc}">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">状态</label>
             <div class="layui-input-inline">
-                <input type="checkbox" layui-skin="primary" name="status" title="发布" value="1">
+                <input type="checkbox" layui-skin="primary" name="status" title="发布" <?php if($data['item']['status']){echo 'checked';} ?> value="1">
             </div>
         </div>
     </form>
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <button class="layui-btn">保存</button>
+            <button class="layui-btn" onclick="save()">保存</button>
         </div>
     </div>
 </body>
@@ -86,6 +93,7 @@
                 if(res.code > 0){
                     return layer.msg('上传失败');
                 }
+                console.log(res);
             }
             ,error: function(){
                 //演示失败状态，并实现重传
@@ -97,4 +105,28 @@
             }
         });
     });
+    
+    //保存
+    function save() {
+        var title = $.trim($('input[name="title"]').val());
+        var url = $.trim($('input[name="url"]').val());
+        if (title==''){
+            layer.msg('请输入视频名称',{'icon':2,'anim':6});
+            return;
+        }
+        if (url == '') {
+            layer.msg('请输入视频地址',{'icon':2,'anim':6});
+            return;
+        }
+        $.post('/admins/Video/save',$('form').serialize(),function (res) {
+            if (res.code > 0) {
+                layer.msg(res.msg,{'icon':2,'anim':2});
+            }else{
+                layer.msg(res.msg,{'icon':1});
+                setTimeout(function () {
+                    parent.window.location.reload();
+                },1000);
+            }
+        },'json');
+    }
 </script>
