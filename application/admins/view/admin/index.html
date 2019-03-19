@@ -108,7 +108,8 @@
     // 删除
     function del(id) {
         layer.confirm('确定要删除吗？', {
-            btn: ['确定','取消']
+            icon:3
+            ,btn: ['确定','取消']
         }, function(){
             $.post('/admins/Admin/delete',{'id':id},function (res) {
                 if(res.code>0){

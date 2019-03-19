@@ -20,7 +20,13 @@ class Video extends BaseAdmin {
         $data['wd'] = trim(input('get.wd'));
         $where = array();
         $data['wd'] && $where = 'title like "%'.$data['wd'].'%"';
-        $data['data'] = $this->db->table('video')->where($where)->pages($data['pageSize']);
+        $data['data'] = $this->db->table('video')->where($where)->order('id desc')->pages($data['pageSize']);
+
+        $label_ids = [];
+        foreach ($data['data']['lists'] as $item){
+            !in_array($item['channel_id'],$label_ids) && $label_ids[] = $item['channel_id'];
+        }
+        $label_ids && $data['labels'] = $this->db->table('video_label')->where('id in('.implode(',',$label_ids).')')->cates('id');
 
         $this->assign('data',$data);
         return $this->fetch();
@@ -76,5 +82,12 @@ class Video extends BaseAdmin {
         }
         $img = '/upload/'.$info->getSaveName();
         exit(json_encode(array('code'=>0,'msg'=>$img)));
+    }
+
+    //删除
+    public function delete(){
+        $id = (int)input('post.id');
+        $this->db->table('video')->where(array('id'=>$id))->delete();
+        exit(json_encode(array('code'=>0,'msg'=>'删除成功')));
     }
 }

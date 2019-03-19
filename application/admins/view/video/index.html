@@ -72,7 +72,7 @@
                             {volist name="data.data.lists" id='vo'}
                             <tr>
                                 <td>{$vo.id}</td>
-                                <td>{$vo.channel_id}</td>
+                                <td>{:isset($data['labels'][$vo['channel_id']])?$data['labels'][$vo['channel_id']]['title']:''}</td>
                                 <td>{$vo.title}</td>
                                 <td>{$vo.pv}</td>
                                 <td>{$vo.score}</td>
@@ -131,9 +131,10 @@
     // 删除
     function del(id) {
         layer.confirm('确定要删除吗？', {
-            btn: ['确定','取消']
+            icon:3
+            ,btn: ['确定','取消']
         }, function(){
-            $.post('/admins/Admin/delete',{'id':id},function (res) {
+            $.post('/admins/Video/delete',{'id':id},function (res) {
                 if(res.code>0){
                     layer.alert(res.msg,{icon:2});
                 }else {
