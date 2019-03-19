@@ -1,2 +1,2 @@
-*
-!.gitignore
+/extend/*
+!/extend/Util/
