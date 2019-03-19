@@ -44,12 +44,17 @@
 
                 <div class="layui-card-body">
                     <div class="layui-table-tool-temp">
-                        <div class="layui-btn-container">
-                            <!-- 如果是add()为添加管理员，那么add()里不传参，默认id为空(undefined)，转换整型的时候为0 -->
-                            <button class="layui-btn layui-btn-sm" onclick="add()">添加</button>
-                        </div>
+                        <div class="layui-btn-container"></div>
                     </div>
                     <div class="layui-table-box">
+                        <div class="layui-form-item">
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" id="wd" value="{$data.wd}" placeholder="请输入视频名称">
+                            </div>
+                            <button class="layui-btn layui-btn-primary" onclick="search()"><i class="layui-icon">&#xe615;</i></button>
+                            <!-- 如果是add()为添加管理员，那么add()里不传参，默认id为空(undefined)，转换整型的时候为0 -->
+                            <button class="layui-btn layui-btn-sm" style="float: right" onclick="add()">添加视频</button>
+                        </div>
                         <table class="layui-table">
                             <thead>
                             <tr>
@@ -64,7 +69,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {volist name="data.data" id='vo'}
+                            {volist name="data.data.lists" id='vo'}
                             <tr>
                                 <td>{$vo.id}</td>
                                 <td>{$vo.channel_id}</td>
@@ -81,6 +86,7 @@
                             {/volist}
                             </tbody>
                         </table>
+                        <div id="pages" style="text-align: center"></div>
                     </div>
                 </div>
             </div>
@@ -92,6 +98,21 @@
         layer = layui.layer;
         $ = layui.jquery;
         laypage = layui.laypage;
+
+        //执行一个laypage实例
+        laypage.render({
+            elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
+            ,count: {$data.data.total}//数据总数，从服务端得到
+            ,limit: {$data.pageSize}
+            ,curr: {$data.page}
+            ,jump: function(obj, first) {
+
+                //首次不执行,指定页面跳转
+                if (!first) {
+                    search(obj.curr);
+                }
+            }
+        });
     });
 
     // 添加编辑
@@ -123,6 +144,16 @@
                 }
             },'json');
         });
+    }
+
+    //搜索
+    function search(curpage) {
+        var wd = $.trim($('#wd').val());
+        var url = "/admins/Video/index?page="+curpage;
+        if (wd) {
+            url += '&wd=' + wd;
+        }
+        window.location.href = url;
     }
 </script>
 

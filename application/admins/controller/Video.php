@@ -16,8 +16,11 @@ class Video extends BaseAdmin {
     public function index(){
         $data['pageSize'] = 15;
         $data['page'] = max(1,(int)input('get.page'));
+
+        $data['wd'] = trim(input('get.wd'));
         $where = array();
-        $data['data'] = $this->db->table('video')->where($where)->lists();
+        $data['wd'] && $where = 'title like "%'.$data['wd'].'%"';
+        $data['data'] = $this->db->table('video')->where($where)->pages($data['pageSize']);
 
         $this->assign('data',$data);
         return $this->fetch();
@@ -68,7 +71,7 @@ class Video extends BaseAdmin {
         }
         $info = $file->move(ROOT_PATH.'public'.DS.'upload');
         $ext = ($info->getExtension());
-        if (!in_array($ext,array('jpg','jpeg','gif','png'))){
+        if (!in_array($ext,array('jpg','jpeg','gif','png','JPG','JPEG','GIF','PNG'))){
             exit(json_encode(array('code'=>1,'msg'=>'文件格式不支持')));
         }
         $img = '/upload/'.$info->getSaveName();
